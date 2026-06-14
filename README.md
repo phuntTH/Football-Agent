@@ -129,7 +129,9 @@ Final Answer
 
 ## Football Data
 
-* Football-Data.org API
+* Football-Data.org - API
+* Zafronix - API
+* api-football - API
 * FIFA World Cup Data
 
 ## Search
