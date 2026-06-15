@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Football Agent</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Markdown Renderer -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Highlight code block (optional) -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <header class="header">
+
+            <div>
+                <h1>⚽ Football Agent</h1>
+
+                <p>
+                    World Cup 2026 · Match Analysis · IFAB Laws · Football News
+                </p>
+            </div>
+
+            <div class="status">
+                <span class="status-dot"></span>
+                Online
+            </div>
+
+        </header>
+
+        <div class="main">
+
+            <!-- TOOL TRACE -->
+            <aside class="trace-panel">
+
+                <div class="panel-header">
+                    🔧 Tool Trace
+                </div>
+
+                <div id="tool-trace">
+
+                    <div class="tool waiting">
+                        Waiting for tools...
+                    </div>
+
+                </div>
+
+            </aside>
+
+            <!-- CHAT -->
+            <section class="chat-section">
+
+                <div id="chat-box" class="chat-box">
+
+                    <div class="welcome">
+
+                        <h2>
+                            Welcome to Football Agent
+                        </h2>
+
+                        <p>
+                            Ask anything about football:
+                        </p>
+
+                        <div class="welcome-grid">
+
+                            <div class="welcome-card">
+                                ⚽ World Cup 2026
+                            </div>
+
+                            <div class="welcome-card">
+                                📊 Match Statistics
+                            </div>
+
+                            <div class="welcome-card">
+                                👥 Lineups
+                            </div>
+
+                            <div class="welcome-card">
+                                🏆 World Cup History
+                            </div>
+
+                            <div class="welcome-card">
+                                📖 IFAB Laws
+                            </div>
+
+                            <div class="welcome-card">
+                                📰 Latest News
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- INPUT -->
+                <div class="input-row">
+
+                    <input id="message-input" type="text" autocomplete="off"
+                        placeholder="Ask anything about football..." />
+
+                    <button id="send-btn" onclick="sendMessage()">
+                        Send
+                    </button>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+    <script src="/static/app.js"></script>
+
+</body>
+
+</html>
