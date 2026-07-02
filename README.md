@@ -1,94 +1,123 @@
-# ⚽ Football Agent
+# Football Agent
 
-An intelligent multi-agent football assistant powered by **LangGraph**, **Google Gemini**, **Football APIs**, and **Tavily Search**.
+An intelligent multi-agent football assistant built with **LangGraph**, **Google Gemini**, football data APIs, and **Tavily Search**.
 
-Football Agent can answer questions about:
+Football Agent is designed to answer football-related questions by combining structured data sources with web search fallback. The system routes each question to the most appropriate specialized agent, executes relevant tools, and generates a structured final response.
 
-* FIFA World Cup 2026
-* Match results and statistics
-* Starting lineups and formations
-* Teams and players
-* IFAB Laws of the Game
-* Historical World Cup data
-* Latest football news
-
-The system combines structured football databases with real-time web search to provide accurate and up-to-date answers.
+The project currently focuses on local development, testing agent behavior, tool calling, fallback logic, and streamed responses.
 
 ---
 
 # Features
 
-## 🌍 World Cup 2026 Assistant
+## World Cup 2026 Assistant
 
-Query World Cup 2026 information such as:
+Supports questions related to the FIFA World Cup 2026, including:
 
 * Match schedules
 * Match results
 * Group standings
 * Top scorers
+* Participating teams
 * Team performance
-* Starting lineups
+* Match details
 
 Example:
 
-> What matches will be played on June 15, 2026?
+```text
+What matches will be played on June 15, 2026?
+```
 
 ---
 
-## 📊 Football Data Retrieval
+## Football Match Data Retrieval
 
-Retrieve football-related information from structured APIs:
+Retrieves structured football information from external APIs.
+
+Supported information includes:
 
 * Match details
-* Team information
-* Player statistics
+* Match results
 * Goals and assists
-* Formations
 * Match events
+* Team information
+* Player information
+* Match statistics
+* Starting lineups when available
 
 Example:
 
-> Starting lineup between Brazil and Morocco at World Cup 2026
+```text
+What was the score between Brazil and Morocco?
+```
+
+```text
+Who scored in the Brazil vs Morocco match?
+```
 
 ---
 
-## 📖 IFAB Laws of the Game
+## IFAB Laws of the Game
 
-Specialized legal football assistant for:
+Provides answers about football rules using IFAB law data.
+
+Supported topics include:
 
 * Offside
 * Handball
 * VAR
 * Penalties
-* Red cards
 * Yellow cards
+* Red cards
 * Referee decisions
 
 Example:
 
-> Explain the offside rule.
+```text
+Explain the offside rule.
+```
 
 ---
 
-## 📰 Latest Football News
+## Football News Search
 
-When information is not available in football databases, the agent automatically falls back to web search using Tavily.
+Uses Tavily Search to retrieve football news when structured football APIs do not contain enough information.
+
+Typical use cases include:
+
+* Latest football news
+* Transfer rumors
+* Player injuries
+* Recent statements
+* Expert analysis
+* Match previews
+* Recently announced lineups
 
 Example:
 
-> Latest news about Kylian Mbappé
+```text
+Latest news about Kylian Mbappé
+```
 
 ---
 
-## 🔄 Intelligent Fallback Mechanism
+## Fallback Search Mechanism
 
-The system automatically detects missing or incomplete football data.
+The system detects missing, incomplete, or unsupported football data from APIs.
 
-Workflow:
+When structured data is unavailable, the agent automatically switches to web search.
 
-Football API → World Cup API → Tavily Search → Final Answer
+```text
+Football API
+      ↓
+Missing or incomplete data
+      ↓
+Tavily Search
+      ↓
+Final summarized answer
+```
 
-This ensures users still receive useful answers even when structured databases lack information.
+This approach improves answer coverage while reducing unsupported or fabricated responses.
 
 ---
 
@@ -100,39 +129,114 @@ This ensures users still receive useful answers even when structured databases l
 User Question
        │
        ▼
-Route Classifier
+Intent Classifier
        │
- ┌─────┼───────────────┐
- │     │               │
- ▼     ▼               ▼
-Law  Football      World Cup
-Agent Agent        Agent
- │     │               │
- └─────┼───────────────┘
+ ┌─────┼─────────────────────────────┐
+ │     │             │               │
+ ▼     ▼             ▼               ▼
+Law   Football    World Cup         News
+Agent Agent       Agent             Agent
+ │     │             │               │
+ └─────┼─────────────┼───────────────┘
+       │
        ▼
-Fallback News Agent
+Fallback Search
+       │
        ▼
-Summarizer
+Summarization Node
+       │
        ▼
 Final Answer
 ```
 
 ---
 
+# Agent Routing
+
+The system classifies user questions into several categories:
+
+| Intent            | Example Question         | Target Agent         |
+| ----------------- | ------------------------ | -------------------- |
+| Football laws     | What is offside?         | Law Agent            |
+| Match data        | Who scored for Brazil?   | Football Agent       |
+| World Cup history | Who won World Cup 2014?  | World Cup Agent      |
+| World Cup 2026    | Matches on June 15, 2026 | World Cup 2026 Agent |
+| Football news     | Latest Mbappé update     | News Agent           |
+
+The router also uses keyword-based rules for common requests such as lineups, match statistics, goals, World Cup schedules, and IFAB laws.
+
+---
+
+# Tool Execution Flow
+
+A typical tool execution flow is shown below.
+
+```text
+User Question
+      ↓
+Intent Classification
+      ↓
+Selected Agent
+      ↓
+Tool Call
+      ↓
+Tool Result
+      ↓
+Data Validation
+      ├── Valid Data → Generate Answer
+      └── Missing Data → Tavily Search Fallback
+```
+
+Example tools used by the project:
+
+```text
+get_world_cup_matches
+get_world_cup_standings
+get_match_events
+get_match_lineup
+get_match_statistics
+search_ifab_law
+search_latest_news
+```
+
+---
+
+# Streaming and Tool Tracing
+
+The application supports Server-Sent Events (SSE) for streamed agent responses.
+
+During execution, the frontend displays:
+
+* Tool calls
+* Tool completion events
+* Agent response progress
+* Final formatted Markdown response
+
+Example tool trace:
+
+```text
+search_latest_news
+tavily_search_results_json
+```
+
+This makes the agent workflow easier to inspect during local development and debugging.
+
+---
+
 # Technology Stack
 
-## AI
+## AI and Agent Framework
 
 * LangGraph
 * LangChain
 * Google Gemini
 
-## Football Data
+## Football Data Sources
 
-* Football-Data.org - API
-* Zafronix - API
-* api-football - API
-* FIFA World Cup Data
+* Football-Data.org API
+* API-Football
+* Zafronix API
+* FIFA World Cup data sources
 
 ## Search
 
@@ -142,12 +246,14 @@ Final Answer
 
 * FastAPI
 * Uvicorn
+* Python
 
 ## Frontend
 
 * HTML
 * CSS
 * JavaScript
+* Marked.js for Markdown rendering
 
 ---
 
@@ -158,116 +264,79 @@ Football-Agent/
 │
 ├── src/
 │   ├── agent/
-│   ├── tools/
-│   ├── services/
+│   │   ├── graph.py
+│   │   ├── router.py
+│   │   └── state.py
+│   │
 │   ├── prompts/
-│   └── graph.py
+│   │   └── prompts.py
+│   │
+│   ├── services/
+│   │   ├── football_service.py
+│   │   ├── worldcup2026_service.py
+│   │   └── news_service.py
+│   │
+│   └── tools/
+│       ├── football_tools.py
+│       ├── worldcup_tools.py
+│       ├── law_tools.py
+│       └── news_tools.py
 │
 ├── ui/
 │   ├── api/
+│   │   └── chat.py
+│   │
 │   ├── services/
+│   │   └── agent_service.py
+│   │
 │   ├── schemas/
+│   │   └── chat_schema.py
+│   │
 │   ├── static/
+│   │   ├── app.js
+│   │   └── style.css
+│   │
 │   ├── templates/
+│   │   └── index.html
+│   │
 │   └── app.py
 │
 ├── main.py
 ├── requirements.txt
+├── .env.example
 └── README.md
 ```
 
 ---
 
-# How It Works
-
-## Step 1: User asks a question
-
-Example:
-
-```text
-What was the score between Brazil and Morocco in World Cup 2026?
-```
-
----
-
-## Step 2: Route Classification
-
-The classifier determines the best agent:
-
-* Football Agent
-* World Cup Agent
-* Law Agent
-* News Agent
-
----
-
-## Step 3: Tool Execution
-
-The selected agent calls one or more tools.
-
-Example:
-
-```text
-get_wc2026_matches
-get_wc2026_match_detail
-search_latest_news
-```
-
----
-
-## Step 4: Fallback Search
-
-If football data is unavailable:
-
-```text
-Football API
-      ↓
-No Data
-      ↓
-Tavily Search
-      ↓
-Answer Generated
-```
-
----
-
-## Step 5: Final Response
-
-The summarization node produces a clean Markdown answer.
-
----
-
 # Running Locally
 
-## Clone Repository
+## Clone the Repository
 
 ```bash
 git clone https://github.com/your-username/football-agent.git
-
 cd football-agent
 ```
 
-## Create Virtual Environment
+## Create a Virtual Environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate:
+Activate the environment.
 
-Windows
+Windows:
 
 ```bash
 .venv\Scripts\activate
 ```
 
-Linux / Mac
+Linux or macOS:
 
 ```bash
 source .venv/bin/activate
 ```
-
----
 
 ## Install Dependencies
 
@@ -275,29 +344,25 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
-
 ## Configure Environment Variables
 
-Create `.env`
+Create a `.env` file in the root directory.
 
 ```env
-GOOGLE_API_KEY=YOUR_GEMINI_KEY
-
-TAVILY_API_KEY=YOUR_TAVILY_KEY
-
-FOOTBALL_DATA_API_KEY=YOUR_FOOTBALL_DATA_KEY
+GOOGLE_API_KEY=YOUR_GEMINI_API_KEY
+TAVILY_API_KEY=YOUR_TAVILY_API_KEY
+FOOTBALL_DATA_API_KEY=YOUR_FOOTBALL_DATA_API_KEY
 ```
 
----
+Depending on the enabled services, additional API keys may be required.
 
-## Start Application
+## Start the Application
 
 ```bash
 python main.py
 ```
 
-Open:
+Open the application in your browser:
 
 ```text
 http://localhost:8000
@@ -307,72 +372,104 @@ http://localhost:8000
 
 # Example Questions
 
-## World Cup
+## World Cup 2026
 
 ```text
 Matches on June 15, 2026
 ```
 
 ```text
-Brazil vs Morocco score
-```
-
-```text
 World Cup 2026 standings
 ```
 
----
-
-## Football Data
+```text
+Who are the top scorers in World Cup 2026?
+```
 
 ```text
-Starting lineup between USA and Paraguay
+Brazil vs Morocco score in World Cup 2026
 ```
+
+## Football Match Data
 
 ```text
 Who scored for Brazil?
 ```
 
----
+```text
+What happened in the Brazil vs Morocco match?
+```
+
+```text
+Show match statistics for Argentina vs France
+```
 
 ## IFAB Laws
 
 ```text
-Explain offside
+Explain the offside rule
 ```
 
 ```text
-When is a handball given?
+When is a handball penalty given?
 ```
 
----
+```text
+Can VAR review a yellow card?
+```
 
-## News
+## Football News
 
 ```text
 Latest football transfer news
 ```
 
 ```text
-Mbappé latest update
+Latest update about Kylian Mbappé
 ```
+
+```text
+Recent injury news about Brazil players
+```
+
+---
+
+# Current Scope
+
+The current version is designed for local development and agent testing.
+
+The main goals are:
+
+* Testing LangGraph agent workflows
+* Validating routing logic
+* Testing football API tool calls
+* Testing fallback web search
+* Inspecting tool traces
+* Streaming agent responses to the frontend
+* Improving Markdown response formatting
+
+Deployment, authentication, persistent chat history, and production infrastructure are intentionally not included in the current scope.
 
 ---
 
 # Future Improvements
 
-* PostgreSQL support
+* PostgreSQL integration for chat history
 * User authentication
-* Chat history
-* Docker deployment
-* VPS deployment
-* Multi-language support
+* Persistent conversation memory
+* Docker support
+* Cloud or VPS deployment
+* Rate limiting
+* Logging and monitoring
+* Unit and integration tests
+* Better match entity resolution
 * Live match tracking
-* Streaming token responses
-* Voice interface
+* Multi-language support
+* Voice input and output
+* More reliable lineup and formation data sources
 
 ---
 
 # Author
 
-Developed as a football-focused AI assistant using LangGraph, Gemini, football databases, and web search technologies.
+Developed as a football-focused multi-agent AI assistant using LangGraph, Google Gemini, football APIs, and Tavily Search.
